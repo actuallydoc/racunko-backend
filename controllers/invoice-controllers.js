@@ -147,15 +147,15 @@ const createInvoice = async (req, res) => {
     });
     return res.send({ invoiceData: invoice });
   } catch (err) {
-    return res.status(400);
+    console.log(err)
   }
 };
 
 const getInvoice = async (req, res) => {
   let user;
-  const { userId } = req.body;
   //Send all the invoices from the user id
   const { userid } = req.body;
+
   //Create an invoice by the company id
   try {
     user = await prisma.user.findUnique({
@@ -177,7 +177,7 @@ const getInvoice = async (req, res) => {
   });
   return res
     .status(200)
-    .send({ "All invoices for the company found!": invoices });
+    .send({ data: invoices });
   //return res.status(200).send({ user: user });
 };
 exports.getInvoice = getInvoice;

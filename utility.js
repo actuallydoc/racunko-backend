@@ -60,7 +60,7 @@ const generatePDF = async (
   ).returnData();
   cenestoritev = ceneStoritev(storitve);
 
-  cene_skupaj_brezDDV = ceneSkupajbrezDDV(freshCene);
+  cene_skupaj_brezDDV = ceneSkupajbrezDDV(cenestoritev);
 
   // console.log("Cena celega računa brez DDV: " + cene_skupaj_brezDDV);
   razlika_Skupaj = razlikaDDV(cene_skupaj_brezDDV);
@@ -150,7 +150,7 @@ const renderPaymentData = (
   }
   doc.text(`Sestavil: ${createdBy}`, 15, finalY + 15);
   doc.text(
-    `Placilo na TRR ${companyIBAN} ${companyBankname}, SWIFT: ${companySWIFT}`,
+    `Plačilo na TRR ${companyIBAN} ${companyBankname}, SWIFT: ${companySWIFT}`,
     15,
     finalY + 20
   );

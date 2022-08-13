@@ -4,17 +4,29 @@ const InvoiceRouter = require("./routes/invoice-routes.js");
 const userRouter = require("./routes/user-routes.js");
 const companyRouter = require("./routes/company-routes.js");
 const partnerRouter = require("./routes/partner-routes.js");
+const PORT = process.env.PORT || 5000;
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
+const corsOptions = {
+  origin: ['http://localhost:3000','http://localhost:5000'],
+  credentials: true };
 app = express();
-app.use(cors());
+app.use(cors(corsOptions));
+
+//All the middleware that is possible lol
+//Depending on the PDF size usually max 5mb tho.
+app.use(cookieParser())
+app.use(bodyParser.json({limit: '5mb'}));
+app.use(bodyParser.urlencoded({limit: '5mb', extended: true}));
 app.use(express.json({ limit: "10mb" }));
 app.use(bodyParser.json());
+
+
 
 app.use("/invoice", InvoiceRouter);
 app.use("/user", userRouter);
 app.use("/company", companyRouter);
 app.use("/partner", partnerRouter);
 
-app.listen(3000, () => {
-  console.log("Server started on port 3000");
-});
+app.listen(PORT, () => {
+  console.log(`Server started on port ${PORT}`);});

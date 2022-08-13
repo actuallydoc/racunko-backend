@@ -10,10 +10,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@prisma/client": "^4.1.1",
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.0",
+    "cookie": "^0.5.0",
+    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "express": "^4.18.1",
+    "jsonwebtoken": "^8.5.1",
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.5.25",
     "node-pdf-printer": "^1.1.7",
@@ -22,6 +25,7 @@
     "pdf-to-base64": "^1.0.3"
   },
   "devDependencies": {
-    "prisma": "^4.1.1"
+    "@prisma/client": "^4.2.1",
+    "prisma": "^4.2.1"
   }
 }
