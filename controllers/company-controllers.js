@@ -143,6 +143,38 @@ const updateCompany = async (req, res) => {
         return res.status(400).send(error);
     }
 }
+
+const deleteCompany = async (req, res) => {
+    let user;
+    let company
+    //Send all the invoices from the user id
+    const id = req.id
+    console.log("Id invoice", id)
+    //Create an invoice by the company id
+    try {
+        user = await prisma.user.findUnique({
+        where: {
+            id: id,
+        },
+        include: {
+            company: true,
+        },
+        });
+        if (!user.company[0]){
+            return res.status(400).send({ message: "User with  company does not exist" });
+        }
+        company = await prisma.company.delete({
+        where: {
+            id: user.company[0].id,
+        },
+        });
+        return res.send({ message: "Company deleted sucessfully!" });
+    } catch (error) {
+        console.log(error);
+        return res.status(400).send(error);
+    }
+}
+exports.deleteCompany = deleteCompany;
 exports.updateCompany = updateCompany;
 exports.getCompanies = getCompanies;
 exports.createCompany = createCompany;
