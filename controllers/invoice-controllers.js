@@ -167,7 +167,7 @@ const getInvoices = async (req, res) => {
       },
     });
     if (!user.company[0]){
-        return res.status(400).send({ message: "User with  company does not exist" });
+        return res.status(400).send({ message: "No Companies" });
     }
 
   } catch (err) {

@@ -81,9 +81,6 @@ const getCompanies = async (req, res) => {
             company: true,
         },
         });
-        if (!user.company[0]){
-            return res.status(400).send({ message: "User with  company does not exist" });
-        }
         company = await prisma.company.findMany({
         where: {
             userId: user.id,
@@ -161,7 +158,7 @@ const deleteCompany = async (req, res) => {
         },
         });
         if (!user.company[0]){
-            return res.status(400).send({ message: "User with  company does not exist" });
+            return res.status(200).send({ message: "No companies" });
         }
         company = await prisma.company.delete({
         where: {
