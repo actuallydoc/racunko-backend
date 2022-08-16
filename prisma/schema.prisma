@@ -13,11 +13,13 @@ datasource db {
 model User {
   id        Int       @id @default(autoincrement())
   createdAt DateTime  @default(now())
-  username String
+  username  String
   email     String    @unique
   password  String
+  picture   String?
   company   Company[]
   invoice   Invoice[]
+  Service   Service[]
 }
 
 model Company {
@@ -36,11 +38,11 @@ model Company {
   User              User      @relation(fields: [userId], references: [id])
   userId            Int
   partners          Partner[]
-  sign              String
+  sign              String?
 }
 
 model Invoice {
-  id                Int    @id @default(autoincrement())
+  id                Int       @id @default(autoincrement())
   datumIzdaje       String
   datumStoritve     String
   datumPlacila      String
@@ -60,7 +62,20 @@ model Invoice {
   partnerId         Int
   Pdf64             String
   signedPdf64       String
-  User              User   @relation(fields: [invoiceId], references: [id])
+  User              User      @relation(fields: [invoiceId], references: [id])
+  services          Service[]
+}
+
+model Service {
+  id              Int     @id @default(autoincrement())
+  serviceName     String
+  servicePrice    Float
+  serviceQuantity Int
+  serviceTotal    Float
+  invoiceId       Int
+  Invoice         Invoice @relation(fields: [invoiceId], references: [id])
+  User            User?   @relation(fields: [userId], references: [id])
+  userId          Int?
 }
 
 model Partner {

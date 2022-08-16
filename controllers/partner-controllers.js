@@ -6,20 +6,25 @@ const createPartner = async(req, res, next) => {
     //Get the user id from the request.body and find the user and the company
     let user;
     let partner;
-    const { userid, partnerName, partnerAddress, partnerPostalCode, partnerCity, partnerVAT, partnerIBAN, partnerSWIFT, partnerBankname, partnerMaticnast, partnerPhone } = req.body
+    const { partnerName, partnerAddress, partnerPostalCode, partnerCity, partnerVAT, partnerIBAN, partnerSWIFT, partnerBankname, partnerMaticnast, partnerPhone } = req.body
 
     user = await prisma.user.findUnique({
         where: {
-            id: userid
+            id: req.id
         },
         include: {
             company: true
         }
     })
+
     if(!user){
         return res.status(400).send({"message": "User and company does not exist"})
     }
     let company = user.company[0]
+    console.log(company)
+    if (!company) {
+        return res.status(400).send({"message": "Company does not exist create one!"})
+    }
     //Create the partner
     try {
         partner = await prisma.partner.create({

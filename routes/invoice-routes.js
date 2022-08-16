@@ -1,10 +1,11 @@
-const {createInvoice,getInvoice} = require('../controllers/invoice-controllers');
+const {createInvoice,getInvoices} = require('../controllers/invoice-controllers');
 const express = require('express');
+const {verifyToken} = require("../controllers/user-controllers");
 const InvoiceRouter = express.Router();
 
 
-InvoiceRouter.post('/create', createInvoice)
-InvoiceRouter.post('/get', getInvoice)
+InvoiceRouter.post('/create',verifyToken, createInvoice)
+InvoiceRouter.get('/get', verifyToken,getInvoices)
 
 
 module.exports = InvoiceRouter;

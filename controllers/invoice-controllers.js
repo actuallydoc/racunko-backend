@@ -40,7 +40,6 @@ const createInvoice = async (req, res) => {
   let partners;
   let company;
   let {
-    userId,
     stRacuna,
     datumIzdaje,
     datumStoritve,
@@ -51,7 +50,7 @@ const createInvoice = async (req, res) => {
   try {
     user = await prisma.user.findUnique({
       where: {
-        id: userId,
+        id: req.id,
       },
       include: {
         company: true,
@@ -151,34 +150,49 @@ const createInvoice = async (req, res) => {
   }
 };
 
-const getInvoice = async (req, res) => {
+const getInvoices = async (req, res) => {
   let user;
+  let company
   //Send all the invoices from the user id
-  const { userid } = req.body;
-
+  const id = req.id
+  console.log("Id invoice", id)
   //Create an invoice by the company id
   try {
     user = await prisma.user.findUnique({
       where: {
-        id: userid,
+        id: id,
       },
       include: {
         company: true,
       },
     });
+    if (!user.company[0]){
+        return res.status(400).send({ message: "User with  company does not exist" });
+    }
+
+  } catch (err) {
+    console.log("No Token Found");
+    return res.status(401)
+  }
+  try {
+    company = user.company[0];
+
+  } catch (err) {
+    console.log("Company does not exist");
+    return  res.status(400).send({message: "You do not have a company"});
+  }
+  try{
+    const invoices = await prisma.invoice.findMany({
+      where: {
+        invoiceId: company.id,
+      },
+    });
+    return res
+        .status(200)
+        .send({ data: invoices });
   } catch (err) {
     console.log(err);
   }
-  let company = user.company[0];
-  invoices = await prisma.invoice.findMany({
-    where: {
-      invoiceId: company.id,
-    },
-  });
-  return res
-    .status(200)
-    .send({ data: invoices });
-  //return res.status(200).send({ user: user });
 };
-exports.getInvoice = getInvoice;
+exports.getInvoices = getInvoices;
 exports.createInvoice = createInvoice;
