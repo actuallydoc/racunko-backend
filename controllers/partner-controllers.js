@@ -92,24 +92,24 @@ const getPartners = async(req, res, next) => {
 
 const updatePartner = async(req, res, next) => {
     let partner;
-    let { partnerName, partnerAddress, partnerPostalCode, partnerCity, partnerVAT, partnerIBAN, partnerSWIFT, partnerBankname, partnerMaticnast, partnerPhone } = req.body
-    let id = req.id
+    let { id, partnerName, partnerAddress, partnerPostalCode, partnerCity, partnerVAT, partnerIBAN, partnerSWIFT, partnerBankname, partnerMaticnast, partnerPhone } = req.body
+    let userId = req.id
     try {
         partner = await prisma.partner.findUnique({
             where: {
-                id: id
+                id: userId
             }
         })
     }catch(err){
         console.log(err);
     }
-    if(!partner){
-        return res.status(400).send({"message": "Partner does not exist"})
-    }
     try {
         partner = await prisma.partner.update({
             where: {
                 id: id
+            },
+            include: {
+                User: true,
             },
             data: {
                 partnerName: partnerName,
@@ -139,7 +139,7 @@ const removePartner = async(req, res, next) => {
     try {
         user = await prisma.user.findUnique({
             where: {
-                id:userId
+                id: userId
             },
             include: {
                 company: true,
@@ -154,7 +154,6 @@ const removePartner = async(req, res, next) => {
     try {
         partner = await prisma.partner.delete({
             where: {
-                userId: userId,
                 id: id,
             }
         })
