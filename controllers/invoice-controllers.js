@@ -40,6 +40,7 @@ const createInvoice = async (req, res) => {
   let partners;
   let company;
   let {
+    status,
     stRacuna,
     datumIzdaje,
     datumStoritve,
@@ -67,9 +68,6 @@ const createInvoice = async (req, res) => {
     partners = await prisma.company.findFirst({
       where: {
         id: company.id,
-      },
-      include: {
-        partners: true,
       },
     });
   } catch (err) {
@@ -141,6 +139,7 @@ const createInvoice = async (req, res) => {
         createdby: company.createdby,
         partnerId: partnerId,
         Pdf64: Pdf64,
+        status: status,
         signedPdf64: signedPdf64,
       },
     });
@@ -155,7 +154,6 @@ const getInvoices = async (req, res) => {
   let company
   //Send all the invoices from the user id
   const id = req.id
-  console.log("Id invoice", id)
   //Create an invoice by the company id
   try {
     user = await prisma.user.findUnique({
@@ -167,7 +165,7 @@ const getInvoices = async (req, res) => {
       },
     });
     if (!user.company[0]){
-        return res.status(400).send({ message: "No Companies" });
+        return res.status(200).send({ message: "No Companies" });
     }
 
   } catch (err) {
@@ -185,11 +183,21 @@ const getInvoices = async (req, res) => {
     const invoices = await prisma.invoice.findMany({
       where: {
         invoiceId: company.id,
+        User: {
+            id: req.id
+        }
       },
+
     });
+    const partners = await prisma.partner.findMany({
+        where: {
+          userId: id
+        }
+    })
+    console.log(partners)
     return res
         .status(200)
-        .send({ data: invoices });
+        .send({ data: invoices, partners: partners });
   } catch (err) {
     console.log(err);
   }

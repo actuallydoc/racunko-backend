@@ -64,8 +64,8 @@ model Invoice {
   signedPdf64       String
   User              User      @relation(fields: [invoiceId], references: [id])
   services          Service[]
+  status String
 }
-
 model Service {
   id              Int     @id @default(autoincrement())
   serviceName     String
