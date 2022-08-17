@@ -20,6 +20,7 @@ model User {
   company   Company[]
   invoice   Invoice[]
   Service   Service[]
+  partner  Partner[]
 }
 
 model Company {
@@ -37,7 +38,6 @@ model Company {
   createdby         String
   User              User      @relation(fields: [userId], references: [id])
   userId            Int
-  partners          Partner[]
   sign              String?
 }
 
@@ -90,6 +90,6 @@ model Partner {
   partnerBankname   String
   partnerMaticnast  String
   partnerPhone      String
-  Company           Company? @relation(fields: [companyId], references: [id])
-  companyId         Int
+  User              User      @relation(fields: [userId], references: [id])
+  userId         Int
 }

@@ -70,7 +70,6 @@ const getCompanies = async (req, res) => {
     let company
     //Send all the invoices from the user id
     const id = req.id
-    console.log("Id invoice", id)
     //Create an invoice by the company id
     try {
         user = await prisma.user.findUnique({
@@ -97,7 +96,6 @@ const updateCompany = async (req, res) => {
     let company
     //Send all the invoices from the user id
     const id = req.id
-    console.log("Id invoice", id)
     //Create an invoice by the company id
     try {
         user = await prisma.user.findUnique({
@@ -146,7 +144,6 @@ const deleteCompany = async (req, res) => {
     let company
     //Send all the invoices from the user id
     const id = req.id
-    console.log("Id invoice", id)
     //Create an invoice by the company id
     try {
         user = await prisma.user.findUnique({
