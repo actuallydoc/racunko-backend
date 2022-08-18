@@ -28,23 +28,18 @@
     <loaded-nodes />
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
-    <connection id="016d0a86-d787-4ba8-91b5-7cd856304ba9">
-      <console name="Connection 1" type="STANDARD" schema="main" session="Main" />
+    <connection id="a1b00250-fb02-4293-a100-9105253c476e">
+      <console name="Connection" type="STANDARD" schema="main" session="Main" />
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
-    <open-files>
-      <object connection-id="016d0a86-d787-4ba8-91b5-7cd856304ba9" object-ref="schemas/main/tables/Company" />
-    </open-files>
+    <open-files />
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
-    <connection id="016d0a86-d787-4ba8-91b5-7cd856304ba9" />
+    <connection id="a1b00250-fb02-4293-a100-9105253c476e" />
   </component>
   <component name="DBNavigator.Project.DatasetFilterManager">
-    <filter-actions connection-id="016d0a86-d787-4ba8-91b5-7cd856304ba9" dataset="main.Company" active-filter-id="EMPTY_FILTER" />
-    <filter-actions connection-id="016d0a86-d787-4ba8-91b5-7cd856304ba9" dataset="main.User" active-filter-id="EMPTY_FILTER" />
-    <filter-actions connection-id="016d0a86-d787-4ba8-91b5-7cd856304ba9" dataset="main.Partner" active-filter-id="EMPTY_FILTER" />
-    <filter-actions connection-id="016d0a86-d787-4ba8-91b5-7cd856304ba9" dataset="main.Invoice" active-filter-id="EMPTY_FILTER" />
+    <filter-actions connection-id="a1b00250-fb02-4293-a100-9105253c476e" dataset="main.Partner" active-filter-id="EMPTY_FILTER" />
   </component>
   <component name="DBNavigator.Project.EditorStateManager">
     <last-used-providers />
@@ -75,9 +70,9 @@
   </component>
   <component name="DBNavigator.Project.Settings">
     <connections>
-      <connection id="016d0a86-d787-4ba8-91b5-7cd856304ba9" active="true" signed="true">
+      <connection id="a1b00250-fb02-4293-a100-9105253c476e" active="true" signed="true">
         <database>
-          <name value="Connection 1" />
+          <name value="Connection" />
           <description value="" />
           <database-type value="SQLITE" />
           <config-type value="BASIC" />
@@ -120,7 +115,7 @@
           <session-management value="true" />
           <ddl-file-binding value="true" />
           <database-logging value="true" />
-          <connect-automatically value="false" />
+          <connect-automatically value="true" />
           <restore-workspace value="true" />
           <restore-workspace-deep value="false" />
           <environment-type value="default" />

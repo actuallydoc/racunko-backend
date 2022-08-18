@@ -119,6 +119,7 @@ const createInvoice = async (req, res) => {
       company.companyMaticnast,
       company.sign
     );
+
     invoice = await prisma.invoice.create({
       data: {
         datumIzdaje: datumIzdaje,
@@ -137,7 +138,7 @@ const createInvoice = async (req, res) => {
         companyMaticnast: company.companyMaticnast,
         companyPhone: company.companyPhone,
         createdby: company.createdby,
-        partnerId: partnerId,
+        partnerId: partner.id,
         Pdf64: Pdf64,
         status: status,
         signedPdf64: signedPdf64,
@@ -194,7 +195,6 @@ const getInvoices = async (req, res) => {
           userId: id
         }
     })
-    console.log(partners)
     return res
         .status(200)
         .send({ data: invoices, partners: partners });
@@ -202,5 +202,39 @@ const getInvoices = async (req, res) => {
     console.log(err);
   }
 };
+const removeInvoice = async (req, res) => {
+  console.log('remove invoice')
+  const {id, partnerId} = req.body
+  console.log(id)
+    let user;
+    let company;
+    let invoice;
+    //Remove an invoice by the company id
+    try {
+        user = await prisma.user.findUnique({
+        where: {
+            id: req.id,
+        },
+        });
+    } catch (err) {
+        console.log(err);
+    }
+    if (!user) {
+        return res.status(400).send({ message: "User does not exist" });
+    }
+    try {
+        invoice = await prisma.invoice.delete({
+        where: {
+            id: id,
+            partnerId: partnerId
+        },
+        });
+      console.log("Delete Invoice: ", invoice);
+    } catch (err) {
+        console.log(err);
+    }
+    return res.send({ message: "Invoice deleted" });
+}
+exports.removeInvoice = removeInvoice;
 exports.getInvoices = getInvoices;
 exports.createInvoice = createInvoice;
