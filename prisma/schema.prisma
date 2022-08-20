@@ -1,12 +1,10 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -19,7 +17,6 @@ model User {
   picture   String?
   company   Company[]
   invoice   Invoice[]
-  Service   Service[]
   partner  Partner[]
 }
 
@@ -63,19 +60,10 @@ model Invoice {
   Pdf64             String
   signedPdf64       String
   User              User      @relation(fields: [invoiceId], references: [id])
-  services          Service[]
+  services          String[]
   status String
-}
-model Service {
-  id              Int     @id @default(autoincrement())
-  serviceName     String
-  servicePrice    Float
-  serviceQuantity Int
-  serviceTotal    Float
-  invoiceId       Int
-  Invoice         Invoice @relation(fields: [invoiceId], references: [id])
-  User            User?   @relation(fields: [userId], references: [id])
-  userId          Int?
+  amount Float
+  taxamount Float
 }
 
 model Partner {

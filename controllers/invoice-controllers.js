@@ -46,7 +46,12 @@ const createInvoice = async (req, res) => {
     datumStoritve,
     datumPlacila,
     partnerId,
+    services,
+    amount,
+    taxamount
   } = req.body;
+
+  let parsed = JSON.stringify(services)
   //Create an invoice by the company id
   try {
     user = await prisma.user.findUnique({
@@ -103,7 +108,7 @@ const createInvoice = async (req, res) => {
   );
 
   try {
-    let { signedPdf64, Pdf64 } = await generatePDF(
+    let { signedPdf64, Pdf64, storitve } = await generatePDF(
       infoRacuna,
       freshPartner,
       company.companySWIFT,
@@ -117,16 +122,17 @@ const createInvoice = async (req, res) => {
       company.companyVAT,
       company.companyPhone,
       company.companyMaticnast,
-      company.sign
+      company.sign,
+      services
     );
-
+    console.log("Storitve banckend: ", storitve)
     invoice = await prisma.invoice.create({
       data: {
         datumIzdaje: datumIzdaje,
         datumStoritve: datumStoritve,
         datumPlacila: datumPlacila,
         stRacuna: stRacuna,
-        invoiceId: company.id,
+        invoiceId: req.id,
         companyName: company.companyName,
         companyAddress: company.companyAddress,
         companyPostalCode: company.companyPostalCode,
@@ -142,8 +148,14 @@ const createInvoice = async (req, res) => {
         Pdf64: Pdf64,
         status: status,
         signedPdf64: signedPdf64,
+        services: parsed,
+        amount: amount,
+        taxamount,
       },
     });
+    delete invoice.Pdf64
+    delete invoice.signedPdf64
+    console.log("Invoice: ", invoice)
     return res.send({ invoiceData: invoice });
   } catch (err) {
     console.log(err)
@@ -204,8 +216,8 @@ const getInvoices = async (req, res) => {
 };
 const removeInvoice = async (req, res) => {
   console.log('remove invoice')
-  const {id, partnerId} = req.body
-  console.log(id)
+  const {invoiceID, partnerId} = req.body
+  console.log("Invoice id: ", invoiceID)
     let user;
     let company;
     let invoice;
@@ -225,8 +237,7 @@ const removeInvoice = async (req, res) => {
     try {
         invoice = await prisma.invoice.delete({
         where: {
-            id: id,
-            partnerId: partnerId
+            id: invoiceID,
         },
         });
       console.log("Delete Invoice: ", invoice);

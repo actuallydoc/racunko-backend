@@ -2,26 +2,12 @@ const { jsPDF } = require("jspdf");
 const autoTable = require("jspdf-autotable");
 let finalY = 0;
 
-class Storitev {
-  constructor(racun, opis, količina, cena_brez_ddv, znesek_z_ddv) {
-    this.racun = racun;
-    this.opis = opis;
-    this.količina = količina;
-    this.cena_brez_ddv = cena_brez_ddv;
-    this.ddv = "22%";
-    this.znesek_z_ddv = znesek_z_ddv;
-  }
-
-  returnData = () => {
-    return [
-      this.opis,
-      this.količina,
-      this.cena_brez_ddv + this.racun.currency,
-      this.ddv,
-      this.znesek_z_ddv + this.racun.currency,
-    ];
-  };
+const Storitev =(racun, opis , količina, cena_brez_ddv,ddv ,znesek_z_ddv)=> {
+   return [
+    opis, količina , cena_brez_ddv + racun.currency ,ddv ,znesek_z_ddv + racun.currency
+  ]
 }
+
 const generatePDF = async (
   racun,
   partner,
@@ -36,28 +22,21 @@ const generatePDF = async (
   companyVAT,
   companyPhone,
   companyMaticnast,
-  sign
+  sign,
+  services
 ) => {
   const doc = new jsPDF();
   finalY = doc.lastAutoTable.finalY || 10;
   doc.addFont("fonts/DejaVuSans.ttf", "DejaVu", "normal");
   doc.addFont("fonts/DejaVuSans-Bold.ttf", "DejaVu", "bold");
   let storitve = [];
-  storitve[0] = new Storitev(
-    racun,
-    "POMOČ NA LICU MESTA ZA MOTORNO KOLO YAMAHA\nREG :CE55BN\nLASTNIK: ŽUNK ERNEST\nREFERENCA: TBSC202208040130\nRELACIJA: BOŠTANJ-KOZJE-BOŠTANJ",
-    "1",
-    "81.97",
-    zDDV("81.97")
-  ).returnData();
+    services.map((service)=>{
+        console.log(service);
+        const storitev = Storitev(racun, service[0], service[1], service[2], service[3], service[4]);
+      console.log("Storitev funkcija:", storitev)
+        storitve.push(storitev);
+    })
 
-  storitve[1] = new Storitev(
-    racun,
-    "DODATNI KM",
-    "44",
-    "38.72",
-    zDDV("38.72")
-  ).returnData();
   cenestoritev = ceneStoritev(storitve);
 
   cene_skupaj_brezDDV = ceneSkupajbrezDDV(cenestoritev);
@@ -109,7 +88,7 @@ const generatePDF = async (
   let signedPdf64 = await saveSignedFile(doc, racun, sign);
   // console.log(Pdf64);
   // console.log(signedPdf64);
-  return { signedPdf64, Pdf64 };
+  return { signedPdf64, Pdf64, storitve };
 };
 const renderPaymentData = (
   doc,
