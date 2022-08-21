@@ -2,6 +2,7 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+
 const createUser = async (req, res) => {
   let exists;
   const {username, email, password} = req.body;
@@ -13,6 +14,7 @@ const createUser = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
+
   }
     if (exists) {
       console.log('user already exists');
@@ -92,8 +94,8 @@ const verifyToken = async (req, res, next) => {
 }
 
 const getUser = async (req, res) => {
-    const  id = req.id;
-    console.log(req.id)
+    const  id = req.id
+
     try{
         const user = await prisma.user.findFirst({
             where: {
@@ -114,7 +116,7 @@ const getUser = async (req, res) => {
 
 const updateProfilePicture = async (req, res) => {
     const {picture} = req.body;
-    console.log(picture)
+
     const id = req.id;
     const user = await prisma.user.update({
         where: {

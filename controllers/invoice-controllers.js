@@ -65,14 +65,12 @@ const createInvoice = async (req, res) => {
     return res.status(400).send({ message: "User and company does not exist" });
   }
 
-  console.log("Company id: ", companyId);
   try {
     company = await prisma.company.findFirst({
       where: {
         id: companyId,
       },
     });
-    console.log("Company", company);
   } catch (err) {
     console.log(err);
   }
@@ -148,7 +146,6 @@ const createInvoice = async (req, res) => {
 };
 
 const getInvoices = async (req, res) => {
-    console.log('get invoices')
   let user;
   let company
   //Send all the invoices from the user id
@@ -163,7 +160,6 @@ const getInvoices = async (req, res) => {
         company: true,
       },
     });
-    console.log("user", user);
     if (!user.company[0]){
         return res.status(200).send({ message: "No Companies" });
     }
@@ -173,7 +169,6 @@ const getInvoices = async (req, res) => {
     return res.status(401)
   }
   try {
-    console.log("company", company);
 
   } catch (err) {
     console.log("Company does not exist");
@@ -237,7 +232,6 @@ const updateInvoice = async(req, res) => {
   let company
   let user
   let {stRacuna,id ,partnerId ,datumIzdaje, datumStoritve, datumPlacila, status, services, companyId, taxPercent } = req.body;
-  console.log("Invoice id: ", id);
   console.log("Debug")
   try {
     user = await prisma.user.findUnique({

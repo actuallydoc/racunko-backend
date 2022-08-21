@@ -20,7 +20,6 @@ const createCompany = async (req, res) => {
     createdby,
   } = req.body;
   try {
-    console.log(req.body);
     Userexists = await prisma.user.findUnique({
       where: {
         id: req.id,
@@ -33,11 +32,9 @@ const createCompany = async (req, res) => {
 companyId: companyId,
         },
       });
-        console.log(Companyexists);
-    //  if (Companyexists) {
-        //  return res.status(400).send({ message: "You already have a company!" });
-      //}
-
+      if(Companyexists){
+         return res.status(400).send({ message: "Company already exists" });
+      }
       const company = await prisma.company.create({
         data: {
           companyName: companyName,

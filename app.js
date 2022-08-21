@@ -7,10 +7,12 @@ const partnerRouter = require("./routes/partner-routes.js");
 const PORT = process.env.PORT || 5000;
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-const corsOptions = {
-  origin: ['http://localhost:3000','http://localhost:5000'],
-  credentials: true };
+
+
 app = express();
+const corsOptions = {
+  origin: ['http://localhost:3000','http://localhost:5000', 'http://127.0.0.1:3000', 'http://127.0.0.1:5000', 'ws://localhost:3000', 'ws://localhost:5000'],
+  credentials: true };
 app.use(cors(corsOptions));
 
 //All the middleware that is possible lol
@@ -22,11 +24,13 @@ app.use(express.json({ limit: "10mb" }));
 app.use(bodyParser.json());
 
 
-
 app.use("/invoice", InvoiceRouter);
 app.use("/user", userRouter);
 app.use("/company", companyRouter);
 app.use("/partner", partnerRouter);
 
+
 app.listen(PORT, () => {
-  console.log(`Server started on port ${PORT}`);});
+  console.log(`Server started on port ${PORT}`);
+});
+

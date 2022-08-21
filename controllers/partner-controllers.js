@@ -135,7 +135,7 @@ const removePartner = async(req, res, next) => {
     let partner;
     let userId = req.id
     let { id } = req.body
-    console.log(id)
+
     try {
         user = await prisma.user.findUnique({
             where: {
@@ -157,7 +157,6 @@ const removePartner = async(req, res, next) => {
                 id: id,
             }
         })
-        console.log(partner)
     }catch(err){
         console.log(err);
     }
