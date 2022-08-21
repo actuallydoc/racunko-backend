@@ -9,7 +9,7 @@ datasource db {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
+  id        String      @id @default(cuid()) @unique
   createdAt DateTime  @default(now())
   username  String
   email     String    @unique
@@ -21,7 +21,7 @@ model User {
 }
 
 model Company {
-  id                Int       @id @default(autoincrement())
+  id                String      @id @default(cuid()) @unique
   companyName       String
   companyAddress    String
   companyPostalCode String
@@ -34,19 +34,19 @@ model Company {
   companyPhone      String
   createdby         String
   User              User      @relation(fields: [userId], references: [id])
-  userId            Int
+  userId            String
   sign              String?
 }
 
 model Invoice {
-  id                Int       @id @default(autoincrement())
+  id                String      @id @default(cuid()) @unique
   datumIzdaje       String
   datumStoritve     String
   datumPlacila      String
   stRacuna          Int
-  invoiceId         Int
-  companyId         Int
-  partnerId         Int
+  invoiceId         String
+  companyId         String
+  partnerId         String
   Pdf64             String
   signedPdf64       String
   User              User      @relation(fields: [invoiceId], references: [id])
@@ -56,7 +56,7 @@ model Invoice {
 }
 
 model Partner {
-  id                Int      @id @default(autoincrement())
+  id                String      @id @default(cuid()) @unique
   partnerName       String
   partnerAddress    String
   partnerPostalCode String
@@ -68,5 +68,5 @@ model Partner {
   partnerMaticnast  String
   partnerPhone      String
   User              User      @relation(fields: [userId], references: [id])
-  userId         Int
+  userId         String
 }
