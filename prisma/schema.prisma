@@ -45,25 +45,14 @@ model Invoice {
   datumPlacila      String
   stRacuna          Int
   invoiceId         Int
-  companyName       String
-  companyAddress    String
-  companyPostalCode String
-  companyCity       String
-  companyVAT        String
-  companyIBAN       String
-  companySWIFT      String
-  companyBankname   String
-  companyMaticnast  String
-  companyPhone      String
-  createdby         String
+  companyId         Int
   partnerId         Int
   Pdf64             String
   signedPdf64       String
   User              User      @relation(fields: [invoiceId], references: [id])
   services          String[]
+  taxPercent        Float?
   status String
-  amount Float
-  taxamount Float
 }
 
 model Partner {

@@ -37,7 +37,6 @@ const createInvoice = async (req, res) => {
   let user;
   let invoice;
   let partner;
-  let partners;
   let company;
   let {
     status,
@@ -46,9 +45,9 @@ const createInvoice = async (req, res) => {
     datumStoritve,
     datumPlacila,
     partnerId,
+    companyId,
     services,
-    amount,
-    taxamount
+    taxPercent
   } = req.body;
 
   let parsed = JSON.stringify(services)
@@ -58,9 +57,6 @@ const createInvoice = async (req, res) => {
       where: {
         id: req.id,
       },
-      include: {
-        company: true,
-      },
     });
   } catch (err) {
     console.log(err);
@@ -68,13 +64,15 @@ const createInvoice = async (req, res) => {
   if (!user) {
     return res.status(400).send({ message: "User and company does not exist" });
   }
-  company = user.company[0];
+
+  console.log("Company id: ", companyId);
   try {
-    partners = await prisma.company.findFirst({
+    company = await prisma.company.findFirst({
       where: {
-        id: company.id,
+        id: companyId,
       },
     });
+    console.log("Company", company);
   } catch (err) {
     console.log(err);
   }
@@ -125,7 +123,6 @@ const createInvoice = async (req, res) => {
       company.sign,
       services
     );
-    console.log("Storitve banckend: ", storitve)
     invoice = await prisma.invoice.create({
       data: {
         datumIzdaje: datumIzdaje,
@@ -133,29 +130,17 @@ const createInvoice = async (req, res) => {
         datumPlacila: datumPlacila,
         stRacuna: stRacuna,
         invoiceId: req.id,
-        companyName: company.companyName,
-        companyAddress: company.companyAddress,
-        companyPostalCode: company.companyPostalCode,
-        companyCity: company.companyCity,
-        companyVAT: company.companyVAT,
-        companyIBAN: company.companyIBAN,
-        companySWIFT: company.companySWIFT,
-        companyBankname: company.companyBankname,
-        companyMaticnast: company.companyMaticnast,
-        companyPhone: company.companyPhone,
-        createdby: company.createdby,
+        companyId: companyId,
         partnerId: partner.id,
         Pdf64: Pdf64,
         status: status,
         signedPdf64: signedPdf64,
         services: parsed,
-        amount: amount,
-        taxamount,
+        taxPercent: taxPercent,
       },
     });
     delete invoice.Pdf64
     delete invoice.signedPdf64
-    console.log("Invoice: ", invoice)
     return res.send({ invoiceData: invoice });
   } catch (err) {
     console.log(err)
@@ -163,6 +148,7 @@ const createInvoice = async (req, res) => {
 };
 
 const getInvoices = async (req, res) => {
+    console.log('get invoices')
   let user;
   let company
   //Send all the invoices from the user id
@@ -177,6 +163,7 @@ const getInvoices = async (req, res) => {
         company: true,
       },
     });
+    console.log("user", user);
     if (!user.company[0]){
         return res.status(200).send({ message: "No Companies" });
     }
@@ -186,7 +173,7 @@ const getInvoices = async (req, res) => {
     return res.status(401)
   }
   try {
-    company = user.company[0];
+    console.log("company", company);
 
   } catch (err) {
     console.log("Company does not exist");
@@ -195,7 +182,6 @@ const getInvoices = async (req, res) => {
   try{
     const invoices = await prisma.invoice.findMany({
       where: {
-        invoiceId: company.id,
         User: {
             id: req.id
         }
@@ -217,7 +203,6 @@ const getInvoices = async (req, res) => {
 const removeInvoice = async (req, res) => {
   console.log('remove invoice')
   const {invoiceID, partnerId} = req.body
-  console.log("Invoice id: ", invoiceID)
     let user;
     let company;
     let invoice;
@@ -240,12 +225,109 @@ const removeInvoice = async (req, res) => {
             id: invoiceID,
         },
         });
-      console.log("Delete Invoice: ", invoice);
     } catch (err) {
         console.log(err);
     }
     return res.send({ message: "Invoice deleted" });
 }
+
+const updateInvoice = async(req, res) => {
+  let exists
+  let partner
+  let company
+  let user
+  let {stRacuna,id ,partnerId ,datumIzdaje, datumStoritve, datumPlacila, status, services, companyId, taxPercent } = req.body;
+  console.log("Invoice id: ", id);
+  console.log("Debug")
+  try {
+    user = await prisma.user.findUnique({
+      where: {
+        id: req.id,
+      },
+      include: {
+        company: true,
+      },
+    });
+    exists = await prisma.invoice.findUnique({
+      where: {
+        id: id,
+      }
+    });
+    if (!exists) {
+      return res.status(400).send({message: "Invoice does not exist"});
+    }
+    company = await prisma.company.findFirst({
+      where: {
+        id: companyId,
+      },
+    });
+    partner = await prisma.partner.findUnique({
+        where: {
+            id: partnerId,
+        }})
+    let freshPartner = Partner(
+        partner.partnerName,
+        partner.partnerAddress,
+        partner.partnerPostalCode,
+        partner.partnerVAT,
+        partner.partnerCity
+    );
+    let infoRacuna = RačunInfo(
+        stRacuna,
+        datumIzdaje,
+        datumStoritve,
+        datumPlacila
+    );
+
+    let {signedPdf64, Pdf64} = await generatePDF(
+        infoRacuna,
+        freshPartner,
+        company.companySWIFT,
+        company.companyBankname,
+        company.createdby,
+        company.companyIBAN,
+        company.companyName,
+        company.companyAddress,
+        company.companyPostalCode,
+        company.companyCity,
+        company.companyVAT,
+        company.companyPhone,
+        company.companyMaticnast,
+        company.sign,
+        services,
+        taxPercent
+    )
+    let parsed = JSON.stringify(services)
+    invoice = await prisma.invoice.update({
+      where: {
+        id: id,
+      },
+      data: {
+        stRacuna: stRacuna,
+        datumIzdaje: datumIzdaje,
+        datumStoritve: datumStoritve,
+        datumPlacila: datumPlacila,
+        status: status,
+        services: parsed,
+        Pdf64: Pdf64,
+        signedPdf64: signedPdf64,
+        companyId: companyId,
+        partnerId: companyId,
+        taxPercent: taxPercent
+      },
+    });
+    delete invoice.signedPdf64
+    delete invoice.Pdf64
+    return res.status(200).send({invoice: invoice});
+  }
+   catch (err) {
+    console.log(err);
+    }
+
+}
+
+
+exports.updateInvoice = updateInvoice;
 exports.removeInvoice = removeInvoice;
 exports.getInvoices = getInvoices;
 exports.createInvoice = createInvoice;

@@ -31,23 +31,15 @@ const generatePDF = async (
   doc.addFont("fonts/DejaVuSans-Bold.ttf", "DejaVu", "bold");
   let storitve = [];
     services.map((service)=>{
-        console.log(service);
-        const storitev = Storitev(racun, service[0], service[1], service[2], service[3], service[4]);
-      console.log("Storitev funkcija:", storitev)
+        const storitev = Storitev(racun, service[0], service[1], service[2], service[3], zDDV(service[2]));
         storitve.push(storitev);
     })
 
   cenestoritev = ceneStoritev(storitve);
-
   cene_skupaj_brezDDV = ceneSkupajbrezDDV(cenestoritev);
-
-  // console.log("Cena celega računa brez DDV: " + cene_skupaj_brezDDV);
   razlika_Skupaj = razlikaDDV(cene_skupaj_brezDDV);
-  //DEBUG
-  // console.log("Razlika DDV celega računa: " + razlika_Skupaj);
   cena_skupaj_zDDV = zDDV(cene_skupaj_brezDDV);
   //Render header and partner
-
   renderHeader(doc, racun, partner, finalY);
   renderOurCompany(
     doc,
@@ -238,7 +230,7 @@ const renderOurCompany = (
   companySWIFT,
   companyMaticnast,
   companyPhone,
-  racun
+  racun,
 ) => {
   doc.line(131, 15, 131, 54);
   doc.setFont("DejaVu", "bold");
